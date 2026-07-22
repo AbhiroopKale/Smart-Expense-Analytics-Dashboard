@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Smart Expense Dashboard</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>💰 Smart Expense Dashboard</h1>
+
+<!-- ALERT -->
+<div class="alert-box">{{ alert }}</div>
+
+<!-- STATS -->
+<div class="stats">
+
+    <div class="stat-card">
+        <h3>This Month</h3>
+        <p>₹{{ total }}</p>
+    </div>
+
+    <div class="stat-card">
+        <h3>Average</h3>
+        <p>₹{{ avg|round(2) }}</p>
+    </div>
+
+    <div class="stat-card">
+        <h3>Prediction</h3>
+        <p>₹{{ prediction }}</p>
+    </div>
+
+</div>
+
+<!-- INSIGHT -->
+<div class="card">
+    <h3>📊 This Month Insight</h3>
+    <p>
+        💡 You spent most on 
+        <b>{{ top_category[0] }}</b> 
+        (₹{{ top_category[1] }})
+    </p>
+</div>
+
+<!-- GRID -->
+<div class="grid">
+
+<div class="card">
+<h3>Add Expense</h3>
+
+<form action="/add" method="POST">
+
+<input type="date" name="date" required>
+
+<select name="category">
+<option>Food</option>
+<option>Travel</option>
+<option>Shopping</option>
+<option>Bills</option>
+</select>
+
+<input type="number" name="amount" placeholder="Amount" required>
+
+<select name="payment">
+<option>UPI</option>
+<option>Cash</option>
+<option>Card</option>
+</select>
+
+<button>Add Expense</button>
+
+</form>
+</div>
+
+<div class="card">
+<h3>Category Breakdown</h3>
+<canvas id="chart"></canvas>
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const labels = {{ chart | map(attribute=0) | list | tojson }};
+const values = {{ chart | map(attribute=1) | list | tojson }};
+
+new Chart(document.getElementById('chart'), {
+    type: 'doughnut',
+    data: {
+        labels: labels,
+        datasets: [{
+            data: values,
+            backgroundColor: [
+                "#6c5ce7",
+                "#00cec9",
+                "#fdcb6e",
+                "#e17055"
+            ]
+        }]
+    }
+});
+
+</script>
+
+</body>
+</html>
